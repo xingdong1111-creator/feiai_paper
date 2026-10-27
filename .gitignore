@@ -1,0 +1,33 @@
+# ---- 大体积数据/权重/环境：绝不入 git ----
+data/raw/
+data/processed/
+models/
+.venv/
+runs/
+
+# ---- 数据产物（体积大或可重建）----
+*.npz
+*.nii.gz
+*.nii
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.log
+
+# ---- 保留 data/meta 元数据CSV 与 data/figs 演示图（体积小，助复现）----
+# 如需一并忽略，取消下面两行注释：
+# data/meta/
+# data/figs/
+
+# ---- Python 缓存 ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# ---- 系统/编辑器 ----
+.DS_Store
+.idea/
+.vscode/
+*.swp
