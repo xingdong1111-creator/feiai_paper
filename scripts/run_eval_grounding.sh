@@ -7,6 +7,7 @@
 #SBATCH --time=6:00:00
 #SBATCH --output=runs/eval_grounding_%j.log
 
+set -e
 cd /public/home/liuhuan/workspace_xd/feiai_paper
 PY=/public/home/liuhuan/workspace_xd/feiai_paper/.venv/bin/python
 

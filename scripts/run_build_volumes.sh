@@ -6,6 +6,7 @@
 #SBATCH --time=12:00:00
 #SBATCH --output=runs/build_volumes_%j.log
 
+set -e
 cd /public/home/liuhuan/workspace_xd/feiai_paper
 # 全量预处理: 883 例整例 CT -> 固定网格 npz + 每结节归一化坐标/标签/split
 # (CPU 密集, 约数小时; 默认 spacing 2mm, grid 128x192x192)

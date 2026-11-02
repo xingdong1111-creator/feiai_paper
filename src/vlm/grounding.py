@@ -28,7 +28,8 @@ class LoRALinear(nn.Module):
         self.dropout = nn.Dropout(dropout) if dropout > 0 else nn.Identity()
 
     def forward(self, x):
-        base_out = self.base(x)
+        wd = self.base.weight.dtype          # base 可能是 fp16(冻结半精度)而 x 是 fp32
+        base_out = self.base(x.to(wd))       # 显式对齐, 防 CPU回退/检查点重算时 autocast 不生效
         lora = (self.dropout(x).float() @ self.lora_A.t() @ self.lora_B.t()) * self.scaling
         return base_out + lora.to(base_out.dtype)
 

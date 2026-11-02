@@ -38,7 +38,13 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print("device:", device, flush=True)
 
-    llm_dtype = torch.float16 if args.fp16 else (torch.bfloat16 if args.bf16 else torch.float32)
+    llm_dtype = torch.float32
+    if device == "cuda" and args.fp16:
+        llm_dtype = torch.float16
+    elif device == "cuda" and args.bf16:
+        llm_dtype = torch.bfloat16
+    elif args.fp16 or args.bf16:
+        print("WARN: 请求半精度但无 CUDA, LLM 权重回退 fp32", flush=True)
     model = build_qwenvlm(args.llm_path, img_grid=tuple(args.grid), patch=tuple(args.patch),
                           dim=args.dim, depth=args.depth, heads=args.heads,
                           num_queries=args.num_queries, resampler_depth=args.resampler_depth,

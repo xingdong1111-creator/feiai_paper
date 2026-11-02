@@ -41,7 +41,14 @@ def main():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print("device:", device, flush=True)
 
-    llm_dtype = torch.float16 if args.fp16 else (torch.bfloat16 if args.bf16 else torch.float32)
+    # 半精度权重仅在 CUDA 下安全; CPU 回退(驱动太旧等)必须 fp32, 否则 Half权重×Float输入 必崩
+    llm_dtype = torch.float32
+    if device == "cuda" and args.fp16:
+        llm_dtype = torch.float16
+    elif device == "cuda" and args.bf16:
+        llm_dtype = torch.bfloat16
+    elif args.fp16 or args.bf16:
+        print("WARN: 请求半精度但无 CUDA, LLM 权重回退 fp32", flush=True)
     model = build_groundingvlm(args.llm_path, img_grid=tuple(args.grid), patch=tuple(args.patch),
                                dim=args.dim, depth=args.depth, heads=args.heads,
                                vis_grid=tuple(args.vis_grid), lora_r=args.lora_r, lora_alpha=args.lora_alpha,
