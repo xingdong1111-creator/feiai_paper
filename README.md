@@ -119,12 +119,14 @@ feiai_paper/
 │   ├── eval_grounding.py     ★ test 集最终评估
 │   ├── infer_grounding.py    ★ 推理 + 坐标映射回切片 + 可视化
 │   ├── train_stage2*.py      读出模式训练（ablation）
-│   ├── train_oneinout.py     stage1 基线训练
-│   ├── train_baseline.py     M1 基线（2D/3D CNN）
+│   ├── train_oneinout.py     stage1 基线训练（ablation）
+│   ├── train_baseline.py     【遗留】M1 基线（2D/3D CNN），仅引用顶层 src/
 │   ├── download_qwen.sh      下载 Qwen2.5 权重（curl，绕开 httpx2）
-│   ├── show_data.py          CT 数据展示渲染
-│   ├── viz_predictions.py    预测标回 CT 切片
+│   ├── download_qwen.py      【废弃】snapshot_download 版，httpx2 报错，用 .sh
+│   ├── show_data.py          CT 数据展示渲染（工具）
+│   ├── viz_predictions.py    预测标回 CT 切片（工具）
 │   └── run_*.sh              对应 SLURM 提交脚本
+├── src/                      【遗留】M1 旧代码(dataset/model)，仅 train_baseline.py 用
 ├── data/                     （不入 git，见 .gitignore）
 │   ├── meta/                 nodules.csv / annotations.csv / scans.csv
 │   ├── raw/                  883 例原始 CT + mask（58GB）
@@ -133,6 +135,17 @@ feiai_paper/
 ├── models/                   （不入 git）Qwen2.5-1.5B-Instruct 权重（2.9GB）
 └── runs/                     （不入 git）训练日志与 checkpoint
 ```
+
+**模块状态图例：** ★=主线（grounding）；ablation=对照实验；【遗留】=M1 历史代码、主线不引用；【废弃】=已坏/被取代。
+
+| 层 | 内容 | 状态 |
+|---|---|---|
+| 主线 | `grounding.py`/`grounding_data.py` + `train/eval/infer_grounding.py` + `build_volumes.py` | ★ 当前主方向 |
+| 视觉前端 | `vit3d.py`/`resampler.py`(Projector) | ★ 主线共用 |
+| ablation-1 | `encoder3d/model/dataset.py` + `train_oneinout.py`（小3D CNN）| 对照 |
+| ablation-2 | `stage2.py`/`stage2_data.py` + `train_stage2*.py`（读出/生成式）| 对照 |
+| 遗留 M1 | 顶层 `src/`、`train_baseline.py`、`build_dataset/select_samples/stat_nodules/verify_alignment/download_samples.py` | 历史，不被主线引用 |
+| 工具 | `show_data.py`/`viz_predictions.py`/`setup_env.sh`/`download_qwen.sh` | 辅助 |
 
 ---
 
